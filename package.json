@@ -1,6 +1,6 @@
 {
   "name": "tinyimg",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "tiny images tool",
   "main": "tinyimg.js",
   "scripts": {
