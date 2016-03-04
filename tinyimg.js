@@ -37,65 +37,6 @@ var download = function(uri, filename, complete) {
     });
 };
 
-var tinypng = function(file, cb) {
-    fs.createReadStream(file).pipe(request.post('https://api.tinify.com/shrink', {
-        auth: {
-            'user': 'api',
-            'pass': key
-        }
-    }, function (error, response, body) {
-        var filename;
-        if (!error) {
-            filename = path.basename(file);
-            try {
-                body = JSON.parse(body);
-            } catch (e) {
-                console.log(chalk.red('\u2718 请求服务器失败 `' + file + '`'));
-            }
-
-            if (response !== undefined) {
-                if (response.statusCode === 201) {
-
-                    if (body.output.size < body.input.size) {
-
-                        console.log(chalk.green('\u2714 成功为`' + file + '`节省了 ' + chalk.bold(pretty(body.input.size - body.output.size) + ' (' + Math.round(100 - 100 / body.input.size * body.output.size) + '%)') + ' '));
-
-                        download(body.output.url, filename, function() {
-                            fs.readFile(TEMP_DIR + filename, function(err, data) {
-                                if (err) {
-                                    console.log('[error] :  ' + PLUGIN_NAME + ' - ', err);
-                                } else {
-                                    cb(data);
-                                }
-                            });
-                        });
-
-                    } else {
-                        console.log(chalk.yellow('\u2718 `' + file + '` 不能再压缩了'));
-                        cb();
-                    }
-                } else {
-
-                    if (body.error === 'TooManyRequests') {
-                        console.log(chalk.red('\u2718 `' + file + '` API超出每个月使用次数，可以换个KEY继续使用'));
-                        cb();
-                    } else if (body.error === 'Unauthorized') {
-                        console.log(chalk.red('\u2718 `' + file + '` 授权非法'));
-                        cb();
-                    } else {
-                        console.log(chalk.red('\u2718 `' + file + '` ' + body.message));
-                        cb();
-                    }
-
-                }
-            } else {
-                console.log(chalk.red('\u2718 `' + file + '` 服务器未响应'));
-                cb();
-            }
-        }
-    }));
-};
-
 if (argv.v || argv.version) {
 
     console.log("当前安装的版本为: v" + version);
@@ -157,17 +98,63 @@ if (argv.v || argv.version) {
             console.log(chalk.bold.magenta('=== 任务开始 ===\n'));
 
             unique.forEach(function(file, index) {
-                tinypng(file, function(data) {
-                    if(typeof data != "undefined" && data) {
-                        var wstream = fs.createWriteStream(file);
-                        wstream.write(data);
-                        wstream.end();
+                fs.createReadStream(file).pipe(request.post('https://api.tinify.com/shrink', {
+                    auth: {
+                        'user': 'api',
+                        'pass': key
                     }
-                    if(index == (unique.length - 1)) {
-                        cleanTemp();
-                        console.log(chalk.bold.magenta('\n=== 任务完成 ==='));
+                }, function (error, response, body) {
+                    var filename;
+                    if (!error) {
+                        filename = path.basename(file);
+                        try {
+                            body = JSON.parse(body);
+                        } catch (e) {
+                            console.log(chalk.red('\u2718 请求服务器失败 `' + file + '`'));
+                        }
+
+                        if (response !== undefined) {
+                            if (response.statusCode === 201) {
+
+                                if (body.output.size < body.input.size) {
+
+                                    console.log(chalk.green('\u2714 成功为`' + file + '`节省了 ' + chalk.bold(pretty(body.input.size - body.output.size) + ' (' + Math.round(100 - 100 / body.input.size * body.output.size) + '%)') + ' '));
+
+                                    download(body.output.url, filename, function() {
+                                        fs.readFile(TEMP_DIR + filename, function(err, data) {
+                                            if (err) {
+                                                console.log('[error] :  ' + PLUGIN_NAME + ' - ', err);
+                                            } else {
+                                                var wstream = fs.createWriteStream(file);
+                                                wstream.write(data);
+                                                wstream.end();
+                                            }
+                                            if(index == (unique.length - 1)) {
+                                                console.log(chalk.bold.magenta('\n=== 任务完成 ==='));
+                                                rmdir(TEMP_DIR);
+                                            }
+                                        });
+                                    });
+
+                                } else {
+                                    console.log(chalk.yellow('\u2718 `' + file + '` 不能再压缩了'));
+                                }
+                            } else {
+
+                                if (body.error === 'TooManyRequests') {
+                                    console.log(chalk.red('\u2718 `' + file + '` API超出每个月使用次数，可以换个KEY继续使用'));
+                                } else if (body.error === 'Unauthorized') {
+                                    console.log(chalk.red('\u2718 `' + file + '` 授权非法'));
+                                } else {
+                                    console.log(chalk.red('\u2718 `' + file + '` ' + body.message));
+                                }
+
+                            }
+                        } else {
+                            console.log(chalk.red('\u2718 `' + file + '` 服务器未响应'));
+                        }
                     }
-                }.bind(this));
+                }));
             });
 
         }
