@@ -21,6 +21,7 @@
     "array-uniq": "^1.0.1",
     "chalk": "^0.5.1",
     "ext-ext": "^0.1.2",
+    "gifsicle": "^3.0.3",
     "glob": "^4.0.6",
     "minimatch": "^1.0.0",
     "minimist": "^1.1.0",

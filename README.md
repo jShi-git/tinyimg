@@ -15,6 +15,9 @@
     tinyimg -h
 ```
 
+## 使用效果
+![tinyimg](https://cloud.githubusercontent.com/assets/3771576/13520692/7231a78c-e21d-11e5-9e90-9e5a1e9b06f6.png)
+
 ## TODO
 - [x] svg压缩
 - [ ] gif压缩

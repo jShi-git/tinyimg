@@ -66,7 +66,8 @@ var tinypng = function(file, islast) {
     }, function (error, response, body) {
         
         if (!error) {
-            
+            var filename;
+                filename = path.basename(file);
             try {
                 body = JSON.parse(body);
             } catch (e) {
@@ -123,7 +124,11 @@ var svgmin = function(file, islast) {
             throw err;
         }
         svgomin.optimize(data, function(result) {
-            console.log(chalk.green('\u2714 成功为`' + file + '`节省了 ' + chalk.bold(pretty(data.length  - result.data.length) + ' (' + Math.round(100 - 100 / data.length * result.data.length) + '%)') + ' '));
+            if (data.length - result.data.length > 50) {
+                console.log(chalk.green('\u2714 成功为`' + file + '`节省了 ' + chalk.bold(pretty(data.length  - result.data.length) + ' (' + Math.round(100 - 100 / data.length * result.data.length) + '%)') + ' '));
+            } else {
+                console.log(chalk.yellow('\u2718 `' + file + '` 不能再压缩了'));
+            }
             fileCallback(file, result.data, islast);
         });
     });
@@ -169,8 +174,8 @@ if (argv.v || argv.version) {
         files.forEach(function(file) {
             if (fs.existsSync(file)) {
                 if (fs.lstatSync(file).isDirectory()) {
-                    images = images.concat(glob.sync(file + (argv.r || argv.recursive ? '/**' : '') + '/*.+(png|jpg|jpeg|gif|svg)'));
-                } else if (minimatch(file, '*.+(png|jpg|jpeg|gif|svg)', {
+                    images = images.concat(glob.sync(file + (argv.r || argv.recursive ? '/**' : '') + '/*.+(png|jpg|jpeg|svg)'));
+                } else if (minimatch(file, '*.+(png|jpg|jpeg|svg)', {
                         matchBase: true
                     })) {
                     images.push(file);
