@@ -75,7 +75,8 @@ if (argv.v || argv.version) {
     if (key.length === 0) {
         console.log(chalk.bold.red('没有设置API KEY, KEY可以从官网申请获得，官网地址:' + chalk.underline('https://tinypng.com/developers') + '.'));
     } else {
-
+        cleanTemp();
+        
         var images = [];
         files.forEach(function(file) {
             if (fs.existsSync(file)) {
@@ -127,11 +128,12 @@ if (argv.v || argv.version) {
                                             } else {
                                                 var wstream = fs.createWriteStream(file);
                                                 wstream.write(data);
-                                                wstream.end();
-                                            }
-                                            if(index == (unique.length - 1)) {
-                                                console.log(chalk.bold.magenta('\n=== 任务完成 ==='));
-                                                rmdir(TEMP_DIR);
+                                                wstream.end(function() {
+                                                    if(index == (unique.length - 1)) {
+                                                        console.log(chalk.bold.magenta('\n=== 任务完成 ==='));
+                                                        rmdir(TEMP_DIR);
+                                                    }
+                                                });
                                             }
                                         });
                                     });
