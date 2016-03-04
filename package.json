@@ -20,13 +20,15 @@
   "dependencies": {
     "array-uniq": "^1.0.1",
     "chalk": "^0.5.1",
+    "ext-ext": "^0.1.2",
     "glob": "^4.0.6",
     "minimatch": "^1.0.0",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.1",
     "prettysize": "0.0.3",
     "request": "^2.45.0",
-    "rmdir": "^1.2.0"
+    "rmdir": "^1.2.0",
+    "svgo": "^0.6.1"
   },
   "author": "stuart.shi <http://www.shizuwu.cn>",
   "license": "ISC",
