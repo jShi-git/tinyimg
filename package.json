@@ -1,0 +1,37 @@
+{
+  "name": "tinyimg",
+  "version": "0.0.1",
+  "description": "tiny images tool",
+  "main": "tinyimg.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "tinyimg": "tinyimg.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jShi-git/tinyimg.git"
+  },
+  "keywords": [
+    "tinypng",
+    "tool"
+  ],
+  "dependencies": {
+    "array-uniq": "^1.0.1",
+    "chalk": "^0.5.1",
+    "glob": "^4.0.6",
+    "minimatch": "^1.0.0",
+    "minimist": "^1.1.0",
+    "mkdirp": "^0.5.1",
+    "prettysize": "0.0.3",
+    "request": "^2.45.0",
+    "rmdir": "^1.2.0"
+  },
+  "author": "stuart.shi <http://www.shizuwu.cn>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jShi-git/tinyimg/issues"
+  },
+  "homepage": "https://github.com/jShi-git/tinyimg#readme"
+}
